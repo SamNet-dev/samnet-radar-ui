@@ -1,0 +1,188 @@
+html, body { height: 100%; width: 100%; overflow: hidden; }
+#map { height: 100%; width: 100%; background: #020617; }
+:root { color-scheme: dark; }
+body { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+
+.drawer {
+  transition: transform 320ms cubic-bezier(0.22, 1, 0.36, 1), opacity 220ms ease;
+  will-change: transform, opacity;
+}
+.nice-scroll::-webkit-scrollbar { width: 6px; }
+.nice-scroll::-webkit-scrollbar-track { background: transparent; }
+.nice-scroll::-webkit-scrollbar-thumb { background: rgba(148,163,184,0.25); border-radius: 99px; }
+.nice-scroll::-webkit-scrollbar-thumb:hover { background: rgba(148,163,184,0.45); }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Plane Transitions */
+.plane-container {
+  will-change: transform;
+  transition: transform 250ms linear;
+  filter: drop-shadow(0 3px 6px rgba(0,0,0,0.35));
+  transform-origin: 50% 50%;
+}
+.theme-dark .plane-path { stroke: #0f172a; stroke-width: 0.6px; }
+.theme-sat .plane-path { stroke: #000000; stroke-width: 0.8px; }
+.theme-light .plane-path { stroke: #ffffff; stroke-width: 1.1px; }
+
+/* GLOW EFFECT for Selected Plane */
+.plane-selected {
+  filter: drop-shadow(0 0 15px #38bdf8) drop-shadow(0 0 5px white);
+  transform: scale(1.15);
+  z-index: 1000 !important;
+}
+
+/* Emergency Animation */
+@keyframes pulse-red {
+  0% { filter: drop-shadow(0 0 5px rgba(239, 68, 68, 0.7)); transform: scale(1); }
+  50% { filter: drop-shadow(0 0 15px rgba(239, 68, 68, 1)); transform: scale(1.15); }
+  100% { filter: drop-shadow(0 0 5px rgba(239, 68, 68, 0.7)); transform: scale(1); }
+}
+.plane-emergency {
+  animation: pulse-red 1.5s infinite ease-in-out;
+  z-index: 2000 !important;
+}
+.plane-emergency .plane-path {
+  fill: #ef4444 !important;
+  stroke: #7f1d1d !important;
+}
+
+/* Popup Styling */
+.leaflet-popup-content-wrapper {
+  background: rgba(15, 23, 42, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  color: white;
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+  overflow: hidden;
+}
+.leaflet-popup-tip { background: rgba(15, 23, 42, 0.95); border: 1px solid rgba(255,255,255,0.1); border-top: 0; border-left: 0; }
+.leaflet-popup-content { margin: 0; width: 320px !important; max-width: 90vw; }
+.leaflet-container a.leaflet-popup-close-button { display: none; }
+
+.microgrid {
+  background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.05) 1px, transparent 0);
+  background-size: 18px 18px;
+}
+.safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
+
+.range-ring { filter: drop-shadow(0 0 10px rgba(56,189,248,0.85)); }
+.range-halo { filter: drop-shadow(0 0 18px rgba(56,189,248,0.45)); }
+
+.filter-chip {
+  padding: 4px 12px;
+  border-radius: 99px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+  border: 1px solid rgba(148,163,184,0.2);
+  background: rgba(15,23,42,0.4);
+  color: #94a3b8;
+  transition: all 0.2s ease;
+}
+.filter-chip:hover { background: rgba(15,23,42,0.8); color: white; border-color: rgba(255,255,255,0.2); }
+.filter-chip.active {
+  background: rgba(56,189,248,0.15);
+  color: #38bdf8;
+  border-color: rgba(56,189,248,0.5);
+  box-shadow: 0 0 10px rgba(56,189,248,0.1);
+}
+
+/* Legend popover animation */
+.legend-pop {
+  transition: transform 180ms ease, opacity 180ms ease;
+  transform-origin: top right;
+}
+
+.cat-VFR { background: #22c55e; color: #020617; }
+.cat-MVFR { background: #3b82f6; color: white; }
+.cat-IFR { background: #ef4444; color: white; }
+.cat-LIFR { background: #a855f7; color: white; }
+
+/* Plane Photo Styles */
+.plane-photo-container {
+  height: 85px;
+  width: 100%;
+  background: linear-gradient(to bottom, #0f172a, #1e293b);
+  position: relative;
+  overflow: hidden;
+  transition: height 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.plane-photo-container.has-photo { height: 180px; }
+.plane-photo-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.7s ease;
+  z-index: 10;
+}
+.plane-photo-loaded { opacity: 1; }
+
+/* Close Button Area */
+.popup-close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 50;
+  padding: 6px;
+  border-radius: 99px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255,255,255,0.8);
+  backdrop-filter: blur(4px);
+  transition: all 0.2s;
+  cursor: pointer;
+}
+.popup-close-btn:hover { background: rgba(255, 255, 255, 0.15); color: white; }
+
+/* Airport Header Styles */
+#drawerAirportHeader {
+  background-size: cover;
+  background-position: center;
+  transition: background-image 0.5s ease-in-out;
+}
+.header-overlay {
+  background: linear-gradient(to top, rgba(2,6,23,1) 0%, rgba(2,6,23,0.7) 60%, rgba(2,6,23,0.3) 100%);
+}
+
+/* Ops Card Animation */
+.ops-arrow { transition: transform 1s cubic-bezier(0.34, 1.56, 0.64, 1); }
+
+/* Tooltip styling override */
+[title] { cursor: help; }
+
+/* Airport marker (was missing, keeps layout same but makes it actually look right) */
+.airport-pill{
+  display:inline-flex; align-items:center; gap:.4rem;
+  padding:.35rem .6rem;
+  border-radius:999px;
+  background: rgba(2,6,23,.80);
+  border: 1px solid rgba(148,163,184,.25);
+  color:#e2e8f0;
+  font-weight: 800;
+  font-size: 11px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 10px 25px rgba(0,0,0,.35);
+}
+.airport-dot{
+  width:8px; height:8px; border-radius:999px;
+  background:#38bdf8;
+  box-shadow: 0 0 12px rgba(56,189,248,.55);
+}
+
+/* Reduced motion support (perf friendly) */
+@media (prefers-reduced-motion: reduce) {
+  .plane-container { transition: none !important; }
+  .plane-emergency { animation: none !important; }
+  .drawer, .legend-pop { transition: none !important; }
+}
